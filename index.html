@@ -1,1 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>ADHD KSM-66 & Coffee 觀察紀錄</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      background: #f5f5f7;
+      margin: 0;
+      padding: 0;
+      color: #222;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 24px auto 40px;
+      padding: 24px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 1.6rem;
+      text-align: center;
+    }
+
+    h2 {
+      margin-top: 1.8rem;
+      font-size: 1.25rem;
+      border-left: 4px solid #444;
+      padding-left: 8px;
+    }
+
+    .question {
+      margin: 16px 0 18px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #fafafa;
+      border: 1px solid #e0e0e0;
+    }
+
+    .question-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .question-sub {
+      font-size: 0.88rem;
+      color: #555;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .field-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+      font-size: 0.9rem;
+    }
+
+    label {
+      font-size: 0.9rem;
+    }
+
+    input[type="number"],
+    select,
+    textarea {
+      font-family: inherit;
+      font-size: 0.9rem;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    input[type="range"] {
+      width: 220px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 60px;
+      resize: vertical;
+      margin-top: 6px;
+    }
+
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: #666;
+      margin-top: 2px;
+    }
+
+    .buttons {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button {
+      cursor: pointer;
+      border-radius: 999px;
+      border: none;
+      padding: 9px 16px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #222;
+      color: #fff;
+    }
+
+    button.secondary {
+      background: #e0e0e0;
+      color: #222;
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    #output {
+      margin-top: 18px;
+      width: 100%;
+      min-height: 160px;
+      font-family: Menlo, Monaco, "SF Mono", monospace;
+      font-size: 0.85rem;
+      white-space: pre-wrap;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      box-sizing: border-box;
+      background: #fafafa;
+    }
+
+    .footer-note {
+      margin-top: 12px;
+      font-size: 0.8rem;
+      color: #777;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 12px;
+        padding: 16px;
+      }
+
+      input[type="range"] {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>ADHD KSM-66 & Coffee 日常觀察紀錄</h1>
+    <p style="font-size:0.9rem; color:#555; text-align:center; margin-bottom:18px;">
+      每天填一次，按下「生成 notes」會產生一段文字：<br />
+      <code>[YYYY-MM-DD HH:mm ｜ notes=ADHD KSM66 and coffee]</code>，方便貼回日記。
+    </p>
+
+    <!-- ① 生理節律指標 -->
+    <h2>① 生理節律指標（最客觀、最重要）</h2>
+
+    <!-- 1. 起床難度 -->
+    <div class="question">
+      <div class="question-title">1. 起床容易度（1–10）</div>
+      <div class="question-sub">
+        早上是否較容易醒？較少賴床？（數值愈高 = 愈容易起床、愈穩定）
+      </div>
+      <div class="field-row">
+        <label for="q1">分數：</label>
+        <input type="range" id="q1" name="q1" min="1" max="10" value="5"
+               oninput="document.getElementById('q1_val').textContent = this.value">
+        <span id="q1_val">5</span>/10
+      </div>
+      <div class="range-labels">
+        <span>1 = 非常難起床</span>
+        <span>10 = 非常容易起床</span>
+      </div>
+    </div>
+
+    <!-- 2. 睡眠質素 -->
+    <div class="question">
+      <div class="question-title">2. 睡眠質素 / Fragmentation（1–10）</div>
+      <div class="question-sub">
+        半夜醒的次數是否減少？入睡是否更容易？醒來是否覺得「乾淨清爽」？
+        （愈高 = 睡得愈好、愈完整）
+      </div>
+      <div class="field-row">
+        <label for="q2">分數：</label>
+        <input type="range" id="q2" name="q2" min="1" max="10" value="5"
+               oninput="document.getElementById('q2_val').textContent = this.value">
+        <span id="q2_val">5</span>/10
+      </div>
+      <div class="range-labels">
+        <span>1 = 不斷醒／質素很差</span>
+        <span>10 = 一覺瞓天光</span>
+      </div>
+      <textarea id="q2_note" placeholder="補充：例如半夜醒幾多次、入睡時間、特別感受…"></textarea>
+    </div>
+
+    <!-- 3. 午後倦怠 -->
+    <div class="question">
+      <div class="question-title">3. 午後倦怠程度（2–4pm）（1–10）</div>
+      <div class="question-sub">
+        觀察 2–4pm energy drop、腦霧程度。（愈高 = 愈少 energy drop、愈清醒）
+      </div>
+      <div class="field-row">
+        <label for="q3">分數：</label>
+        <input type="range" id="q3" name="q3" min="1" max="10" value="5"
+               oninput="document.getElementById('q3_val').textContent = this.value">
+        <span id="q3_val">5</span>/10
+      </div>
+      <div class="range-labels">
+        <span>1 = 超級眼瞓 / 一塊腦霧</span>
+        <span>10 = 幾乎無 energy drop</span>
+      </div>
+    </div>
+
+    <!-- 4. 心跳與生理緊張度 -->
+    <div class="question">
+      <div class="question-title">4. 心身緊張感（1–10）</div>
+      <div class="question-sub">
+        肩頸放鬆？胸悶減輕？較少被嚇一跳？（愈高 = 愈放鬆、心跳較平穩）
+      </div>
+      <div class="field-row">
+        <label for="q4">分數：</label>
+        <input type="range" id="q4" name="q4" min="1" max="10" value="5"
+               oninput="document.getElementById('q4_val').textContent = this.value">
+        <span id="q4_val">5</span>/10
+      </div>
+      <div class="range-labels">
+        <span>1 = 非常繃緊 / 容易被嚇</span>
+        <span>10 = 身體很放鬆</span>
+      </div>
+    </div>
+
+    <!-- ② 情緒與壓力反應指標 -->
+    <h2>② 情緒與壓力反應指標</h2>
+
+    <!-- 5. 情緒波動 -->
+    <div class="question">
+      <div class="question-title">5. 情緒波動幅度（1–10）</div>
+      <div class="question-sub">
+        老婆一句說話、小挫折，是否較少立即爆？Reset 時間有冇縮短？（愈高 = 波動愈少、愈穩定）
+      </div>
+      <div class="field-row">
+        <label for="q5">分數：</label>
+        <input type="range" id="q5" name="q5" min="1" max="10" value="5"
+               oninput="document.getElementById('q5_val').textContent = this.value">
+        <span id="q5_val">5</span>/10
+      </div>
+      <div class="range-labels">
+        <span>1 = 情緒容易坐過山車</span>
+        <span>10 = 情緒起伏很小</span>
+      </div>
+      <textarea id="q5_note" placeholder="例如：某件小事 reset 所需時間、具體事件…"></textarea>
+    </div>
+
+    <!-- 6. 壓力恢復速度 -->
+    <div class="question">
+      <div class="question-title">6. 壓力恢復速度（Recovery Time）（1–10）</div>
+      <div class="question-sub">
+        生氣／驚慌／不開心後，回到 baseline 的速度。（愈高 = 回復愈快）
+      </div>
+      <div class="field-row">
+        <label for="q6">分數：</label>
+        <input type="range" id="q6" name="q6" min="1" max="10" value="5"
+               oninput="document.getElementById('q6_val').textContent = this.value">
+        <span id="q6_val">5</span>/10
+      </div>
+      <div class="range-labels">
+        <span>1 = 成日 hang 住幾小時</span>
+        <span>10 = 幾分鐘至半小時內回復</span>
+      </div>
+    </div>
+
+    <!-- 7. 多巴胺渴求 -->
+    <div class="question">
+      <div class="question-title">7. 多巴胺渴求指數（Dopamine Craving）（1–10）</div>
+      <div class="question-sub">
+        想睇美女 / YouTube / 食甜嘢 / high dopamine 行為的頻率與強度。（愈高 = craving 較低、較易停手）
+      </div>
+      <div class="field-row">
+        <label for="q7">分數：</label>
+        <input type="range" id="q7" name="q7" min="1" max="10" value="5"
+               oninput="document.getElementById('q7_val').textContent = this.value">
+        <span id="q7_val">5</span>/10
+      </div>
+      <div class="range-labels">
+        <span>1 = 成日想追 high dopamine</span>
+        <span>10 = craving 少而溫和</span>
+      </div>
+      <textarea id="q7_note" placeholder="例如：今天看 high dopamine 內容幾次？每次幾耐？"></textarea>
+    </div>
+
+    <!-- ③ 生活功能（與 MPH 協同） -->
+    <h2>③ 生活功能（Executive Function × MPH 協同效果）</h2>
+
+    <!-- 8. 與 MPH 協同 -->
+    <div class="question">
+      <div class="question-title">8. 與 MPH（利他林）的協同感受</div>
+      <div class="question-sub">
+        早上服用 KSM-66 後，MPH 的效果有沒有變得更穩定、smooth？還是被拉低？
+      </div>
+      <div class="field-row">
+        <label for="q8">整體效果：</label>
+        <select id="q8" name="q8">
+          <option value="明顯改善">明顯改善（更穩定 / 更 smooth）</option>
+          <option value="有少少改善">有少少改善</option>
+          <option value="差不多">差不多（無特別變化）</option>
+          <option value="被拉低 / 有干擾">被拉低 / 有干擾</option>
+        </select>
+      </div>
+      <textarea id="q8_note" placeholder="補充：例如 MPH 起效時間、維持時間、energy 是否平滑…"></textarea>
+    </div>
+
+    <!-- 9. 任務啟動能力 -->
+    <div class="question">
+      <div class="question-title">9. 任務啟動能力（Task Initiation）</div>
+      <div class="question-sub">
+        「今天我開始第一個 task 用咗幾分鐘？」是否較易開始？Pomodoro 是否較快入狀態？
+      </div>
+      <div class="field-row">
+        <label for="q9_minutes">開始第一個 task 前拖延時間：</label>
+        <input type="number" id="q9_minutes" name="q9_minutes" min="0" step="1" style="width:80px;" />
+        <span>分鐘（估計）</span>
+      </div>
+      <div class="field-row">
+        <label for="q9_feel">主觀評分（1–10，愈高 = 愈易啟動）：</label>
+        <input type="range" id="q9" name="q9" min="1" max="10" value="5"
+               oninput="document.getElementById('q9_val').textContent = this.value">
+        <span id="q9_val">5</span>/10
+      </div>
+      <div class="range-labels">
+        <span>1 = 超難開始</span>
+        <span>10 = 幾乎無啟動阻力</span>
+      </div>
+    </div>
+
+    <!-- 10. 冷靜思考能力 -->
+    <div class="question">
+      <div class="question-title">10. 冷靜思考能力（Prefrontal Modulation）（1–10）</div>
+      <div class="question-sub">
+        在 Humm／RSI／投資邏輯等討論時，思路是否更清晰？Jarvisng2 是否更穩定 online？
+        （愈高 = 思路清晰、衝動較少）
+      </div>
+      <div class="field-row">
+        <label for="q10">分數：</label>
+        <input type="range" id="q10" name="q10" min="1" max="10" value="5"
+               oninput="document.getElementById('q10_val').textContent = this.value">
+        <span id="q10_val">5</span>/10
+      </div>
+      <div class="range-labels">
+        <span>1 = Jarvisng1 成日跳出</span>
+        <span>10 = Jarvisng2 很穩定</span>
+      </div>
+      <textarea id="q10_note" placeholder="今天有沒有特別的分析／對話，可以簡短記錄…"></textarea>
+    </div>
+
+    <!-- Buttons -->
+    <div class="buttons">
+      <button type="button" onclick="generateNote()">
+        生成 notes（ADHD KSM66 and coffee）
+      </button>
+      <button type="button" class="secondary" onclick="copyNote()">
+        複製 notes 到剪貼簿
+      </button>
+      <button type="button" class="secondary" onclick="clearForm()">
+        清空表格
+      </button>
+    </div>
+
+    <textarea id="output" placeholder="按「生成 notes」後，這裡會出現可貼回日記的文字…"></textarea>
+
+    <div class="footer-note">
+      ✅ 提示：建議每天固定時間（例如晚上）填寫一次，方便和 KSM-66 / Coffee 使用時間做對照。
+    </div>
+  </div>
+
+  <script>
+    function pad2(n) {
+      return n.toString().padStart(2, "0");
+    }
+
+    function formatDateTime(d) {
+      const year = d.getFullYear();
+      const month = pad2(d.getMonth() + 1);
+      const day = pad2(d.getDate());
+      const hour = pad2(d.getHours());
+      const minute = pad2(d.getMinutes());
+      return `${year}-${month}-${day} ${hour}:${minute}`;
+    }
+
+    function generateNote() {
+      const now = new Date();
+      const dt = formatDateTime(now);
+
+      const q1 = document.getElementById("q1").value;
+      const q2 = document.getElementById("q2").value;
+      const q2_note = document.getElementById("q2_note").value.trim();
+      const q3 = document.getElementById("q3").value;
+      const q4 = document.getElementById("q4").value;
+
+      const q5 = document.getElementById("q5").value;
+      const q5_note = document.getElementById("q5_note").value.trim();
+      const q6 = document.getElementById("q6").value;
+      const q7 = document.getElementById("q7").value;
+      const q7_note = document.getElementById("q7_note").value.trim();
+
+      const q8 = document.getElementById("q8").value;
+      const q8_note = document.getElementById("q8_note").value.trim();
+
+      const q9_minutes = document.getElementById("q9_minutes").value;
+      const q9 = document.getElementById("q9").value;
+
+      const q10 = document.getElementById("q10").value;
+      const q10_note = document.getElementById("q10_note").value.trim();
+
+      let lines = [];
+
+      lines.push(`[${dt} ｜ notes=ADHD KSM66 and coffee]`);
+      lines.push("");
+
+      lines.push("① 生理節律指標");
+      lines.push(`1) 起床容易度：${q1}/10`);
+      lines.push(`2) 睡眠質素 / Fragmentation：${q2}/10`);
+      if (q2_note) lines.push(`   ‣ 補充：${q2_note}`);
+      lines.push(`3) 午後倦怠程度（2–4pm）：${q3}/10`);
+      lines.push(`4) 心身緊張感（放鬆程度）：${q4}/10`);
+      lines.push("");
+
+      lines.push("② 情緒與壓力反應");
+      lines.push(`5) 情緒波動幅度：${q5}/10`);
+      if (q5_note) lines.push(`   ‣ 具體事件／Reset 記錄：${q5_note}`);
+      lines.push(`6) 壓力恢復速度（Recovery）：${q6}/10`);
+      lines.push(`7) 多巴胺渴求指數：${q7}/10`);
+      if (q7_note) lines.push(`   ‣ Craving 記錄：${q7_note}`);
+      lines.push("");
+
+      lines.push("③ 生活功能（MPH 協同）");
+      lines.push(`8) 與 MPH 協同感受：${q8}`);
+      if (q8_note) lines.push(`   ‣ 補充：${q8_note}`);
+
+      let initLine = `9) 任務啟動能力：主觀 ${q9}/10`;
+      if (q9_minutes !== "") {
+        initLine += `，開始第一個 task 前拖延 ≈ ${q9_minutes} 分鐘`;
+      }
+      lines.push(initLine);
+
+      lines.push(`10) 冷靜思考能力（Prefrontal）：${q10}/10`);
+      if (q10_note) lines.push(`   ‣ 補充：${q10_note}`);
+
+      const noteText = lines.join("\n");
+      const output = document.getElementById("output");
+      output.value = noteText;
+
+      // 簡單保存最後一次輸入到 localStorage（可選）
+      try {
+        localStorage.setItem("ADHD_KSM66_notes_last", noteText);
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    function copyNote() {
+      const output = document.getElementById("output");
+      if (!output.value.trim()) {
+        alert("請先按「生成 notes」，再複製。");
+        return;
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(output.value)
+          .then(() => alert("已複製到剪貼簿。"))
+          .catch(() => fallbackCopy(output));
+      } else {
+        fallbackCopy(output);
+      }
+    }
+
+    function fallbackCopy(textarea) {
+      textarea.select();
+      try {
+        document.execCommand("copy");
+        alert("已複製到剪貼簿。");
+      } catch (e) {
+        alert("瀏覽器不支援自動複製，請手動選取文字複製。");
+      }
+      window.getSelection().removeAllRanges();
+    }
+
+    function clearForm() {
+      if (!confirm("確定要清空所有輸入？")) return;
+      const inputs = document.querySelectorAll("input, textarea, select");
+      inputs.forEach((el) => {
+        const tag = el.tagName.toLowerCase();
+        if (tag === "textarea") {
+          el.value = "";
+        } else if (tag === "input") {
+          if (el.type === "range") {
+            el.value = 5;
+            const spanId = el.id + "_val";
+            const span = document.getElementById(spanId);
+            if (span) span.textContent = "5";
+          } else if (el.type === "number") {
+            el.value = "";
+          }
+        } else if (tag === "select") {
+          el.selectedIndex = 0;
+        }
+      });
+      document.getElementById("output").value = "";
+    }
+
+    // 可選：載入上一次生成的 notes 到 output
+    (function loadLastNote() {
+      try {
+        const last = localStorage.getItem("ADHD_KSM66_notes_last");
+        if (last) {
+          document.getElementById("output").value = last;
+        }
+      } catch (e) {
+        // ignore
+      }
+    })();
+  </script>
+</body>
+</html>
 
