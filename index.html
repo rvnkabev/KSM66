@@ -402,6 +402,20 @@
       return `${year}-${month}-${day} ${hour}:${minute}`;
     }
 
+    function triggerShortcut(noteText) {
+      // 把 noteText encode 後，透過 shortcuts:// 呼叫 Shortcut
+      try {
+        const encoded = encodeURIComponent(noteText);
+        const shortcutUrl =
+          "shortcuts://run-shortcut?name=SaveToADHD%20KSM66%20and%20coffee&input=" + encoded;
+        // 只有在 iOS 裝置並安裝 Shortcuts 時才會生效
+        window.location.href = shortcutUrl;
+      } catch (e) {
+        // 如果失敗就什麼都不做，仍然保留在頁面內
+        console.error("Unable to trigger shortcut:", e);
+      }
+    }
+
     function generateNote() {
       const now = new Date();
       const dt = formatDateTime(now);
@@ -465,12 +479,15 @@
       const output = document.getElementById("output");
       output.value = noteText;
 
-      // 簡單保存最後一次輸入到 localStorage（可選）
+      // 保存最後一次輸入到 localStorage（可選）
       try {
         localStorage.setItem("ADHD_KSM66_notes_last", noteText);
       } catch (e) {
         // ignore
       }
+
+      // 呼叫 iOS Shortcut 儲存這份 note
+      triggerShortcut(noteText);
     }
 
     function copyNote() {
@@ -537,4 +554,3 @@
   </script>
 </body>
 </html>
-
