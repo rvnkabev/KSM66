@@ -17,9 +17,7 @@
     margin: auto;
   }
 
-  h1 {
-    margin-bottom: 8px;
-  }
+  h1 { margin-bottom: 8px; }
 
   .fact-box {
     background: #111;
@@ -58,9 +56,7 @@
     font-size: 15px;
   }
 
-  textarea {
-    min-height: 90px;
-  }
+  textarea { min-height: 90px; }
 
   .grid {
     display: grid;
@@ -83,6 +79,31 @@
     border-left: 5px solid #1a73e8;
   }
 
+  .follow-box {
+    background: #f8fbff;
+    border: 1px solid #d6e4ff;
+    border-radius: 10px;
+    padding: 12px;
+    margin-top: 12px;
+  }
+
+  .ruin-box {
+    background: #fff8f8;
+    border: 1px solid #f1b5b5;
+    border-radius: 10px;
+    padding: 12px;
+    margin-top: 12px;
+  }
+
+  .item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .item:last-child {
+    border-bottom: none;
+  }
+
   button {
     width: 100%;
     padding: 14px;
@@ -93,6 +114,10 @@
     color: white;
     cursor: pointer;
     margin-top: 20px;
+  }
+
+  .secondary-btn {
+    background: #1a73e8;
   }
 
   #output {
@@ -177,11 +202,11 @@
     <div class="grid">
       <div>
         <label>Control</label>
-        <textarea id="control" placeholder="我能控制的事：注碼、時間、檢查、停損、休息"></textarea>
+        <textarea id="control" placeholder="每行一項：注碼、時間、檢查、停損、休息"></textarea>
       </div>
       <div>
         <label>Uncontrollable</label>
-        <textarea id="uncontrol" placeholder="市場情緒、身體復原速度、其他人反應、宏觀周期"></textarea>
+        <textarea id="uncontrol" placeholder="每行一項：市場情緒、身體復原速度、其他人反應、宏觀周期"></textarea>
       </div>
     </div>
   </div>
@@ -221,8 +246,21 @@
 
   <div class="step action">
     <h2>11. Action</h2>
+
     <label>下一步行動</label>
     <textarea id="action"></textarea>
+
+    <button class="secondary-btn" onclick="generateActionQuestions()">根據 Control / Uncontrollable 生成 Action 檢查</button>
+
+    <div class="follow-box">
+      <h3>Control 跟進項目</h3>
+      <div id="controlFollowUp">未生成</div>
+    </div>
+
+    <div class="ruin-box">
+      <h3>Uncontrollable → Ruin / Plan B 檢查</h3>
+      <div id="uncontrolPlanB">未生成</div>
+    </div>
   </div>
 
   <div class="step">
@@ -238,9 +276,96 @@
 </div>
 
 <script>
+function splitLines(text) {
+  return text
+    .split("\n")
+    .map(x => x.trim())
+    .filter(x => x.length > 0);
+}
+
+function generateActionQuestions() {
+  const controlItems = splitLines(document.getElementById("control").value);
+  const uncontrolItems = splitLines(document.getElementById("uncontrol").value);
+
+  const controlBox = document.getElementById("controlFollowUp");
+  const uncontrolBox = document.getElementById("uncontrolPlanB");
+
+  if (controlItems.length === 0) {
+    controlBox.innerHTML = "未填寫 Control。";
+  } else {
+    controlBox.innerHTML = controlItems.map((item, index) => `
+      <div class="item">
+        <strong>${index + 1}. ${item}</strong><br>
+        有沒有跟進項目？<br>
+        <select id="controlFollow${index}">
+          <option>有</option>
+          <option>沒有</option>
+          <option>不確定</option>
+        </select>
+        <label>跟進行動</label>
+        <textarea id="controlAction${index}" placeholder="例如：設定停損、預約檢查、通知某人、設提醒、限制注碼"></textarea>
+      </div>
+    `).join("");
+  }
+
+  if (uncontrolItems.length === 0) {
+    uncontrolBox.innerHTML = "未填寫 Uncontrollable。";
+  } else {
+    uncontrolBox.innerHTML = uncontrolItems.map((item, index) => `
+      <div class="item">
+        <strong>${index + 1}. ${item}</strong><br>
+
+        <label>如果這項發生，會不會造成 Ruin？</label>
+        <select id="ruinRisk${index}">
+          <option>不會</option>
+          <option>會</option>
+          <option>不確定</option>
+        </select>
+
+        <label>Plan B</label>
+        <textarea id="planB${index}" placeholder="如果這件事發生，我會如何保 No Ruin？"></textarea>
+      </div>
+    `).join("");
+  }
+}
+
+function collectActionQuestions() {
+  const controlItems = splitLines(document.getElementById("control").value);
+  const uncontrolItems = splitLines(document.getElementById("uncontrol").value);
+
+  let controlSummary = "";
+  let uncontrolSummary = "";
+
+  controlItems.forEach((item, index) => {
+    const follow = document.getElementById(`controlFollow${index}`);
+    const action = document.getElementById(`controlAction${index}`);
+
+    controlSummary += `
+${index + 1}. ${item}
+有沒有跟進項目：${follow ? follow.value : "未生成"}
+跟進行動：${action ? action.value : "未填"}
+`;
+  });
+
+  uncontrolItems.forEach((item, index) => {
+    const ruin = document.getElementById(`ruinRisk${index}`);
+    const planB = document.getElementById(`planB${index}`);
+
+    uncontrolSummary += `
+${index + 1}. ${item}
+是否會造成 Ruin：${ruin ? ruin.value : "未生成"}
+Plan B：${planB ? planB.value : "未填"}
+`;
+  });
+
+  return { controlSummary, uncontrolSummary };
+}
+
 function generateSummary() {
   const bearable = document.getElementById("bearable").value;
   const noRuin = document.getElementById("noRuin").value;
+
+  const actionCheck = collectActionQuestions();
 
   let warning = "";
 
@@ -288,8 +413,14 @@ ${downside.value}
 【Control】
 ${control.value}
 
+【Control 跟進項目】
+${actionCheck.controlSummary || "未填"}
+
 【Uncontrollable】
 ${uncontrol.value}
+
+【Uncontrollable → Ruin / Plan B】
+${actionCheck.uncontrolSummary || "未填"}
 
 【Safety Point】
 最差情況是否承受：${bearable}
